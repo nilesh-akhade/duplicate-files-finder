@@ -29,6 +29,7 @@ type FileEntry struct {
 }
 
 func (d *duplicateFilesFinder) Find() (*DuplicateFilesInfo, error) {
+	// TODO: This function has so many responsibilities; refactor
 	fileSzToPath := make(map[int64]FileEntry)
 	checksums := make(map[string]bool)
 	dup := &DuplicateFilesInfo{}
