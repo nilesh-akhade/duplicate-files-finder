@@ -1,4 +1,4 @@
-package dupe
+package main
 
 import (
 	"testing"

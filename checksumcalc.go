@@ -1,20 +1,23 @@
-package checksum
+package main
 
 import (
 	"crypto/sha1"
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 
-type sha1ChecksumCalc struct {
+type ChecksumCalc interface {
+	Calculate(path string) (string, error)
 }
 
-func NewSHA1Checksum() ChecksumCalc {
+type sha1ChecksumCalc struct{}
+
+func NewSHA1ChecksumCalc() ChecksumCalc {
 	return &sha1ChecksumCalc{}
 }
 
 func (m *sha1ChecksumCalc) Calculate(file string) (string, error) {
-	bytes, err := ioutil.ReadFile(file)
+	bytes, err := os.ReadFile(file)
 	if err != nil {
 		return "", fmt.Errorf("error reading file: %w", err)
 	}

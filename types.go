@@ -1,4 +1,4 @@
-package types
+package main
 
 // DuplicateFilesInfo holds the info about duplicate files
 type DuplicateFilesInfo struct {

@@ -6,14 +6,13 @@ import (
 	"log"
 
 	"github.com/inhies/go-bytesize"
-	"github.com/nilesh-akhade/duplicate-files-finder/pkg/dupe"
 )
 
 func main() {
 	var dir string
 	flag.StringVar(&dir, "dir", ".", "Directory to check for duplicates")
 	flag.Parse()
-	dupeFilesFinder := dupe.New(dir, true)
+	dupeFilesFinder := New(dir, true)
 	dfi, err := dupeFilesFinder.Find()
 	if err != nil {
 		log.Fatalf("err:%v", err)

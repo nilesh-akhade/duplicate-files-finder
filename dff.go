@@ -1,29 +1,26 @@
-package dupe
+package main
 
 import (
 	"os"
 	"path/filepath"
-
-	"github.com/nilesh-akhade/duplicate-files-finder/pkg/checksum"
-	"github.com/nilesh-akhade/duplicate-files-finder/pkg/types"
 )
 
 // DuplicateFilesFinder find the duplicate files and returns the
 // info about duplicate files
 type DuplicateFilesFinder interface {
-	Find() (*types.DuplicateFilesInfo, error)
+	Find() (*DuplicateFilesInfo, error)
 }
 
 func New(dir string, recursive bool) DuplicateFilesFinder {
 	return &duplicateFilesFinder{
 		dir:          dir,
-		checksumCalc: checksum.NewSHA1Checksum(),
+		checksumCalc: NewSHA1ChecksumCalc(),
 	}
 }
 
 type duplicateFilesFinder struct {
 	dir          string
-	checksumCalc checksum.ChecksumCalc
+	checksumCalc ChecksumCalc
 }
 
 type FileEntry struct {
@@ -31,10 +28,10 @@ type FileEntry struct {
 	IsChecksumCalculated bool
 }
 
-func (d *duplicateFilesFinder) Find() (*types.DuplicateFilesInfo, error) {
+func (d *duplicateFilesFinder) Find() (*DuplicateFilesInfo, error) {
 	fileSzToPath := make(map[int64]FileEntry)
 	checksums := make(map[string]bool)
-	dup := &types.DuplicateFilesInfo{}
+	dup := &DuplicateFilesInfo{}
 	err := filepath.WalkDir(d.dir,
 		func(path string, de os.DirEntry, err error) error {
 			if err != nil {
