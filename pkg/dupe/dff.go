@@ -26,13 +26,14 @@ type duplicateFilesFinder struct {
 	checksumCalc checksum.ChecksumCalc
 }
 
+type FileEntry struct {
+	Path                 string
+	IsChecksumCalculated bool
+}
+
 func (d *duplicateFilesFinder) Find() (*types.DuplicateFilesInfo, error) {
-	type FileChecksum struct {
-		Path           string
-		IsChecksumCalc bool
-	}
-	knownFileSizes := make(map[int64]FileChecksum)
-	knownChecksums := make(map[string]int64)
+	fileSzToPath := make(map[int64]FileEntry)
+	checksums := make(map[string]bool)
 	dup := &types.DuplicateFilesInfo{}
 	err := filepath.WalkDir(d.dir,
 		func(path string, de os.DirEntry, err error) error {
@@ -47,25 +48,27 @@ func (d *duplicateFilesFinder) Find() (*types.DuplicateFilesInfo, error) {
 				return err
 			}
 			dup.Total++
-			if fc, found := knownFileSizes[info.Size()]; found {
-				if !fc.IsChecksumCalc {
+			if fc, found := fileSzToPath[info.Size()]; found {
+				if !fc.IsChecksumCalculated {
 					oldChecksum, err := d.checksumCalc.Calculate(fc.Path)
 					if err != nil {
 						return err
 					}
-					knownChecksums[oldChecksum] = info.Size()
+					fc.IsChecksumCalculated = true
+					checksums[oldChecksum] = true
 				}
-				currentFileChecksum, err := d.checksumCalc.Calculate(fc.Path)
+				fileChecksum, err := d.checksumCalc.Calculate(path)
 				if err != nil {
 					return err
 				}
-				if size, found := knownChecksums[currentFileChecksum]; found {
+				if _, found := checksums[fileChecksum]; found {
 					dup.DuplicateFilesCount++
-					dup.DuplicateSize += size
+					dup.DuplicateSize += info.Size()
 					return nil
 				}
+				checksums[fileChecksum] = true
 			} else {
-				knownFileSizes[info.Size()] = FileChecksum{Path: path}
+				fileSzToPath[info.Size()] = FileEntry{Path: path}
 			}
 			dup.UniqueFilesCount++
 			return nil

@@ -1,10 +1,12 @@
 package types
 
-// DuplicateFilesInfo holds the info about duplicate files as requested by the client
+// DuplicateFilesInfo holds the info about duplicate files
 type DuplicateFilesInfo struct {
 	Total int
-	// Duplicate files that are copies of the original one
+	// No. of files which as at least one duplicate somewhere
 	DuplicateFilesCount int
-	DuplicateSize       int64
-	UniqueFilesCount    int
+	// The original file size * (no. of duplicate copies - 1)
+	DuplicateSize int64
+	// No. of unique files, which will be left after deleting duplicates
+	UniqueFilesCount int
 }
