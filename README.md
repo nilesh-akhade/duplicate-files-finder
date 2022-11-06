@@ -2,11 +2,11 @@
 
 Finds duplicate files in a given directory using file size and sha1 checksum.
 
-```bash
-    go run github.com/nilesh-akhade/duplicate-files-finder@latest -r --dir "$HOME/Downloads"
+```console
+    foo@bar:~$ go run github.com/nilesh-akhade/duplicate-files-finder@latest -r --dir "$HOME/Downloads"
     Finding duplicate files...
     --------------------------------------------------
-    Directory                    : /home/nilesh/Downloads
+    Directory                    : /home/foo/Downloads
     Recursive                    : true
     Total files                  : 140087
     Unique files                 : 67500
